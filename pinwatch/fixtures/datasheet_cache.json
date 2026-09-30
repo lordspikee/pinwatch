@@ -1,0 +1,29 @@
+{
+  "AMS1117-3.3": {
+    "package": "SOT-223-3",
+    "pins": [
+      {"pin_number": "1", "pin_name": "ADJ/GND", "function": "GROUND"},
+      {"pin_number": "2", "pin_name": "VOUT", "function": "POWER_OUT"},
+      {"pin_number": "3", "pin_name": "VIN", "function": "POWER_IN"}
+    ],
+    "electrical": {"output_voltage_v": 3.3, "output_current_max_ma": 1000.0, "quiescent_current_ua": 5000.0}
+  },
+  "AZ1117CH-3.3TRG1": {
+    "package": "SOT-223-3",
+    "pins": [
+      {"pin_number": "1", "pin_name": "ADJ/GND", "function": "GROUND"},
+      {"pin_number": "2", "pin_name": "VOUT", "function": "POWER_OUT"},
+      {"pin_number": "3", "pin_name": "VIN", "function": "POWER_IN"}
+    ],
+    "electrical": {"output_voltage_v": 3.3, "output_current_max_ma": 1000.0, "quiescent_current_ua": 4000.0}
+  },
+  "MCP1700T-3302E/MB": {
+    "package": "SOT-223-3",
+    "pins": [
+      {"pin_number": "1", "pin_name": "GND", "function": "GROUND"},
+      {"pin_number": "2", "pin_name": "VIN", "function": "POWER_IN"},
+      {"pin_number": "3", "pin_name": "VOUT", "function": "POWER_OUT"}
+    ],
+    "electrical": {"output_voltage_v": 3.3, "output_current_max_ma": 250.0, "quiescent_current_ua": 1.6}
+  }
+}

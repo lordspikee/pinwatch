@@ -1,0 +1,15 @@
+# Python virtual environment
+venv/
+env/
+ENV/
+
+# Python cache & bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Generated dossiers & logs
+audit_dossier.md
+*.log
+.DS_Store

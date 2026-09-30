@@ -1,0 +1,5 @@
+[
+  {"distributor": "LCSC", "mpn": "AZ1117CH-3.3TRG1", "manufacturer": "Diodes Inc", "package": "SOT-223-3", "stock_qty": 22000, "unit_price_usd": 0.22},
+  {"distributor": "Mouser", "mpn": "MCP1700T-3302E/MB", "manufacturer": "Microchip", "package": "SOT-223-3", "stock_qty": 11000, "unit_price_usd": 0.45},
+  {"distributor": "DigiKey", "mpn": "LP5907MFX-3.3/NOPB", "manufacturer": "Texas Instruments", "package": "SOT-23-5", "stock_qty": 45000, "unit_price_usd": 0.28}
+]
