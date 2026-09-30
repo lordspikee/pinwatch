@@ -1,5 +1,5 @@
 (kicad_sch (version 20231120)
-  (symbol (lib_id "Reg:AMS1117") (property "Reference" "U1") (property "Value" "AMS1117-3.3") (property "Footprint" "SOT-223-3") (property "MPN" "AMS1117-3.3")
+  (symbol (lib_id "Reg:AMS1117") (property "Reference" "U1") (property "Value" "AZ1117CH-3.3TRG1") (property "Footprint" "SOT-223-3") (property "MPN" "AZ1117CH-3.3TRG1")
     (pin "1" (name "ADJ/GND")) (pin "2" (name "VOUT")) (pin "3" (name "VIN"))
   )
 )

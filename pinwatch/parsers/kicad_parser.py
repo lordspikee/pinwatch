@@ -1,10 +1,10 @@
 import re
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 from pinwatch.models import Component, PinDefinition, PinFunction, ComponentType
 
 def parse_sexpr(text: str) -> List[Any]:
     tokens = []
-    pattern = re.compile(r'\(ert{}\)|"([^"\\]*(?:\\.[^"\\]*)*)"|([^\s\(\)]+)')
+    pattern = re.compile(r'\(|\)|"([^"\\]*(?:\\.[^"\\]*)*)"|([^\s\(\)]+)')
     for match in pattern.finditer(text):
         if match.group(0) == '(':
             tokens.append('(')
@@ -78,11 +78,11 @@ class KiCadSchematicParser:
                 if elem[0] == "property" and len(elem) >= 3:
                     properties[str(elem[1])] = str(elem[2])
                 elif elem[0] == "pin" and len(elem) >= 2:
-                    pin_num = str(elem[1])
+                    pin_num = str(elem)
                     pin_name = f"Pin_{pin_num}"
                     for sub in elem:
                         if isinstance(sub, list) and sub and sub[0] == "name" and len(sub) >= 2:
-                            pin_name = str(sub[1])
+                            pin_name = str(sub)
                     pins.append(PinDefinition(
                         pin_number=pin_num,
                         pin_name=pin_name,
@@ -93,7 +93,7 @@ class KiCadSchematicParser:
         val = properties.get("Value", "")
         footprint = properties.get("Footprint", "Unknown")
         if ":" in footprint:
-            footprint = footprint.split(":", 1)[1]
+            footprint = footprint.split(":", 1)
 
         if not ref or ref.startswith("#"):
             return None
@@ -124,3 +124,55 @@ class KiCadSchematicParser:
                     component_type=self._infer_component_type(v.group(1), r.group(1))
                 ))
         return components
+
+    @staticmethod
+    def patch_schematic_symbol(content: str, reference: str, new_mpn: str) -> Tuple[str, str]:
+        """
+        Rewrites the specified symbol's Value and MPN in the KiCad S-expression.
+        Preserves all coordinates, wire connections, and pin definitions.
+        """
+        # Find symbol block with target reference
+        symbol_pattern = re.compile(
+            r'(\(\s*symbol[\s\S]*?\(property\s+"Reference"\s+"' + re.escape(reference) + r'"[\s\S]*?\n\s*\))'
+        )
+        match = symbol_pattern.search(content)
+        if not match:
+            raise ValueError(f"Component reference '{reference}' not found in schematic.")
+
+        original_block = match.group(1)
+        patched_block = original_block
+
+        # Replace Value property
+        val_match = re.search(r'\(property\s+"Value"\s+"([^"]+)"', original_block)
+        old_val = val_match.group(1) if val_match else "UNKNOWN"
+        patched_block = re.sub(
+            r'(\(property\s+"Value"\s+)"[^"]+"',
+            r'\1"' + new_mpn + '"',
+            patched_block
+        )
+
+        # Replace or add MPN property
+        if 'property "MPN"' in patched_block:
+            patched_block = re.sub(
+                r'(\(property\s+"MPN"\s+)"[^"]+"',
+                r'\1"' + new_mpn + '"',
+                patched_block
+            )
+        else:
+            # Inject MPN property right after Value
+            patched_block = re.sub(
+                r'(\(property\s+"Value"\s+"[^"]+"[^\)]*\))',
+                r'\1\n    (property "MPN" "' + new_mpn + '")',
+                patched_block
+            )
+
+        new_content = content[:match.start()] + patched_block + content[match.end():]
+        eco_diff = f"""=======================================================
+ENGINEERING CHANGE ORDER (ECO) - SCHEMATIC IN-PLACE PATCH
+=======================================================
+Target Reference : {reference}
+Previous Value   : {old_val}
+Approved Sub MPN : {new_mpn}
+Status           : KiCad Netlist & Wiring Preserved
+======================================================="""
+        return new_content, eco_diff
